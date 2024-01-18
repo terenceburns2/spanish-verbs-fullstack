@@ -10,5 +10,6 @@ public interface VerbRepository {
     void save(String infinitive, String mood, String tense);
     void unsave(String infinitive, String mood, String tense);
     Optional<List<Verb>> findAll();
-    Optional<List<VerbConjugated>> findByCompositeKey(String infinitive, String mood, String tense);
+    Optional<VerbConjugated> findByCompositeKey(String infinitive, String mood, String tense);
+    Optional<List<VerbConjugated>> findNonSaved();
 }

@@ -2,8 +2,8 @@ package com.terenceapps.spanishverbs.repository;
 
 import com.terenceapps.spanishverbs.model.Verb;
 import com.terenceapps.spanishverbs.model.VerbConjugated;
+import com.terenceapps.spanishverbs.repository.util.RowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -56,27 +56,21 @@ public class JdbcVerbRepository implements VerbRepository {
 
 
     @Override
-    public Optional<List<VerbConjugated>> findByCompositeKey(String infinitive, String mood, String tense) {
+    public Optional<VerbConjugated> findByCompositeKey(String infinitive, String mood, String tense) {
         String sql = "SELECT * FROM verbs WHERE infinitive=? AND mood=? AND tense=?";
 
-        RowMapper<VerbConjugated> verbConjugatedRowMapper = (row, index) -> {
-            VerbConjugated verb = new VerbConjugated();
-            verb.setInfinitive(row.getString("infinitive"));
-            verb.setMood(row.getString("mood"));
-            verb.setTense(row.getString("tense"));
-            verb.setVerbEnglish(row.getString("verb_english"));
-            verb.setForm1s(row.getString("form_1s"));
-            verb.setForm2s(row.getString("form_2s"));
-            verb.setForm3s(row.getString("form_3s"));
-            verb.setForm1p(row.getString("form_1p"));
-            verb.setForm2p(row.getString("form_2p"));
-            verb.setForm3p(row.getString("form_3p"));
-            return verb;
-        };
+        List<VerbConjugated> verbConjugated = jdbcTemplate.query(sql, new RowMapper(), infinitive, mood, tense);
 
-        List<VerbConjugated> verbConjugated = jdbcTemplate.query(sql, verbConjugatedRowMapper, infinitive, mood, tense);
+        return Optional.of(verbConjugated.get(0));
+    }
 
-        return Optional.of(verbConjugated);
+    @Override
+    public Optional<List<VerbConjugated>> findNonSaved() {
+        String sql = "SELECT * FROM verbs WHERE NOT EXISTS " +
+                "(SELECT * FROM saved WHERE verbs.infinitive = saved.infinitive AND verbs.mood = saved.mood AND verbs.tense = saved.tense)";
 
+        List<VerbConjugated> verbs = jdbcTemplate.query(sql, new RowMapper());
+
+        return Optional.of(verbs);
     }
 }
