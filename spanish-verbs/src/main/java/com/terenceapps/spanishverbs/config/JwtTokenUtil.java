@@ -1,5 +1,6 @@
 package com.terenceapps.spanishverbs.config;
 
+import com.terenceapps.spanishverbs.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -46,10 +47,11 @@ public class JwtTokenUtil {
         return true;
     }
 
-    public String generateToken(UserDetails user) {
+    public String generateToken(User user) {
         return Jwts.builder()
                 .issuer("spanishverbs")
                 .subject(user.getUsername())
+                .claim("user_id", user.getId())
                 .expiration(Date.from(Instant.now().plus(1, ChronoUnit.HOURS)))
                 .signWith(getKey())
                 .compact();

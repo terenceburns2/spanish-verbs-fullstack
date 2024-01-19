@@ -20,7 +20,7 @@ public class JdbcUserRepository implements UserRespository {
     }
 
     @Override
-    public Optional<UserDetails> findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         String sql = "SELECT * FROM accounts WHERE email=?";
         List<User> user = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(User.class), email);
         if (user.isEmpty()) {

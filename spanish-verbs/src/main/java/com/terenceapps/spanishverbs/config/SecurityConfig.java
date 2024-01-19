@@ -1,6 +1,7 @@
 package com.terenceapps.spanishverbs.config;
 
 import com.terenceapps.spanishverbs.exception.EmailDoesNotExistException;
+import com.terenceapps.spanishverbs.model.User;
 import com.terenceapps.spanishverbs.repository.JdbcUserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,7 @@ public class SecurityConfig {
     }
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(email -> {
-                    Optional<UserDetails> user = userRepository.findByEmail(email);
+                    Optional<User> user = userRepository.findByEmail(email);
                     if (user.isEmpty()) {
                         throw new EmailDoesNotExistException("The email does not exist.");
                     }

@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.logging.Logger;
 
 @RestController
@@ -41,6 +42,9 @@ public class UserController {
                                 user.getEmail(), user.getPassword()
                         )
                 );
+
+        BigDecimal userId = userService.getUserIdFromEmail(user.getEmail());
+        user.setId(userId);
 
         return ResponseEntity.ok()
                 .header(

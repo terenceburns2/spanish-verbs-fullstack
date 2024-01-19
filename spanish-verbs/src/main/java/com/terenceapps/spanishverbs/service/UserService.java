@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -22,6 +23,16 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public BigDecimal getUserIdFromEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("User email cannot be found.");
+        }
+
+        return ((User) user.get()).getId();
+    }
+
     public void registerUser(User user) {
         if ((userRepository.findByEmail(user.getEmail())).isPresent()) {
             throw new EmailExistsException("This email already exists. Try signing in.");
@@ -31,7 +42,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserDetails> user = userRepository.findByEmail(username);
+        Optional<User> user = userRepository.findByEmail(username);
 
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User email cannot be found.");
