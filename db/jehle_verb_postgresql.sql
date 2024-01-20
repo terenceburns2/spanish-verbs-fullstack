@@ -13665,19 +13665,21 @@ ALTER TABLE ONLY verbs
 ALTER TABLE ONLY verbs
     ADD CONSTRAINT verbs_tense_fkey FOREIGN KEY (tense) REFERENCES tense(tense);
 
-    CREATE TABLE IF NOT EXISTS accounts (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL
-    );
+CREATE TABLE IF NOT EXISTS accounts (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
 
-    CREATE TABLE IF NOT EXISTS saved (
-        infinitive VARCHAR(255),
-        mood VARCHAR(255),
-        tense VARCHAR(255),
-        PRIMARY KEY (infinitive, mood, tense),
-        FOREIGN KEY (infinitive, mood, tense) REFERENCES verbs(infinitive, mood, tense) ON DELETE CASCADE ON UPDATE CASCADE
-    );
+CREATE TABLE IF NOT EXISTS saved (
+    infinitive VARCHAR(255),
+    mood VARCHAR(255),
+    tense VARCHAR(255),
+    userid INTEGER,
+    PRIMARY KEY (infinitive, mood, tense),
+    FOREIGN KEY (infinitive, mood, tense) REFERENCES verbs(infinitive, mood, tense) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (userid) REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 
 -- Completed on 2011-11-15 21:26:21
