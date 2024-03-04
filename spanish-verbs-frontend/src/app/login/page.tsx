@@ -11,7 +11,7 @@ const Login = () => {
       <button
         onClick={() => auth.authenticate("terenceburns2@gmail.com", "hello123")}
       >
-        ***REMOVED***
+        Login.
       </button>
     </div>
   );
