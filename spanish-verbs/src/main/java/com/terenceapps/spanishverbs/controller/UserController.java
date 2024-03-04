@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.logging.Logger;
 
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 @RestController
 public class UserController {
 
@@ -30,8 +31,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/verify-token")
+    public ResponseEntity<Boolean> verifyToken(@RequestParam String token) {
+        boolean isTokenValid = jwtTokenUtil.validate(token);
+        return new ResponseEntity<>(isTokenValid, HttpStatus.OK);
+    }
+
     @PostMapping("/signin")
-    public ResponseEntity<Boolean> signin(@RequestBody User user) {
+    public ResponseEntity<String> signin(@RequestBody User user) {
         if (user.getPassword().isEmpty() || user.getEmail().isEmpty()) {
             throw new BadCredentialsException("Both email and password must be provided.");
         }
@@ -46,11 +53,7 @@ public class UserController {
         BigDecimal userId = userService.getUserIdFromEmail(user.getEmail());
         user.setId(userId);
 
-        return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.AUTHORIZATION,
-                        jwtTokenUtil.generateToken(user)
-                ).build();
+        return ResponseEntity.ok().body(jwtTokenUtil.generateToken(user));
     }
 
     @PostMapping("/register")
